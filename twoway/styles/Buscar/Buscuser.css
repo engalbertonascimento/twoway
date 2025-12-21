@@ -1,0 +1,41 @@
+body {align-items: center;
+    
+}
+
+
+
+h1 {
+  border: solid 2px black;
+  display: inline-block;
+  background-color: rgb(173, 171, 177);
+  margin: 2px;
+  border-radius: 10px;
+  width: 280px;
+  text-align: center
+  
+
+  
+}
+ fieldset {
+    margin 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    background-color: rgb(173, 171, 177);
+    border-radius: 40px;
+ }
+ table{
+    margin-left: auto;
+    margin-right: auto;
+    width:100%;
+    border-color: black; 
+    border: 1px solid;
+    text-align: center;
+    background-color: rgb(173, 171, 177);
+    border-radius: 10px;
+ }
+
+    
+   
+ 
