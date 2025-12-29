@@ -12,16 +12,22 @@ if (!isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] !== 'admin') 
 // 2. LÓGICA DE BUSCA
 $where = "WHERE 1=1"; 
 
+// Filtro por nome do grupo
 if (!empty($_GET['nome'])) {
     $nome = $conn->real_escape_string($_GET['nome']);
-    $where .= " AND nome_completo LIKE '%$nome%'";
-}
-if (!empty($_GET['usuario'])) {
-    $usuario = $conn->real_escape_string($_GET['usuario']);
-    $where .= " AND username LIKE '%$usuario%'";
+    $where .= " AND g.nome LIKE '%$nome%'";
 }
 
-$sql = "SELECT id, nome_completo, username, email, telefone FROM usuarios $where";
+// Filtro por descrição (substituindo o antigo 'usuario')
+if (!empty($_GET['descricao'])) {
+    $descricao = $conn->real_escape_string($_GET['descricao']);
+    $where .= " AND g.descricao LIKE '%$descricao%'";
+}
+
+// 3. CONSULTA COMPATIBILIZADA
+// Fazemos um JOIN com a tabela 'usuarios' para saber quem é o criador
+$sql = "SELECT * FROM usuarios $where";
+
 $result = $conn->query($sql);
 ?>
 
@@ -30,7 +36,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscar Usuário - Chat Interno</title>
+    <title> - Chat Interno</title>
     <link rel="stylesheet" href="../../styles/search_users/styles.css">
 </head>
 <body>
@@ -48,7 +54,7 @@ $result = $conn->query($sql);
         
         <div class="header">
             <div class="welcome-msg">
-                Buscar <strong>Usuários</strong>
+                 <strong>Monitoramento</strong>
             </div>
             <div>
                 <span style="margin-right: 20px;">Olá, <strong><?php echo $_SESSION['username']; ?></strong></span>
@@ -60,28 +66,15 @@ $result = $conn->query($sql);
             <form action="index.php" method="GET">
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.8rem; margin-bottom: 5px;">Nome</label>
+                        <label style="font-size: 0.8rem; margin-bottom: 5px;">Nome do Usuário</label>
                         <input type="text" name="nome" placeholder="Nome" value="<?php echo $_GET['nome'] ?? ''; ?>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
                     </div>
                     
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.8rem; margin-bottom: 5px;">Usuário</label>
-                        <input type="text" name="usuario" placeholder="Username" value="<?php echo $_GET['usuario'] ?? ''; ?>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                    </div>
+                    
 
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 0.8rem; margin-bottom: 5px;">E-mail</label>
-                        <input type="text" name="email" placeholder="Username" value="<?php echo $_GET['email'] ?? ''; ?>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <label style="font-size: 0.8rem; margin-bottom: 5px; color: #666;">Ativo</label>
-                        <input type="checkbox" name="ativo" value="1" checked <?php echo (isset($_GET['ativo'])) ? : ''; ?> style="width: 18px; height: 18px; cursor: pointer;">
-                    </div>
 
                     <button type="submit" class="btn-acao">Buscar</button>
-                    <a href="index.php" class="btn-acao" style="background-color: #95a5a6;">Limpar</a>
-                    <a href="cadastrointerno.html" class="btn-acao" style="background-color: #27ae60;">+ Novo Usuário</a>
+                   
                 </div>
             </form>
         </div>
@@ -91,11 +84,9 @@ $result = $conn->query($sql);
                 <thead>
                     <tr style="background-color: #ecf0f1; border-bottom: 2px solid #ddd;">
                         <th style="padding: 15px; text-align: left;">ID</th>
-                        <th style="padding: 15px; text-align: left;">Nome Completo</th>
-                        <th style="padding: 15px; text-align: left;">Usuário</th>
-                        <th style="padding: 15px; text-align: left;">Email</th>
-                        <th style="padding: 15px; text-align: left;">Telefone</th>
-                        <th style="padding: 15px; text-align: left;">Ações</th>
+                        <th style="padding: 15px; text-align: left;">Nome de usuário</th>
+                        <th style="padding: 15px; text-align: left;">Ultimo login</th>
+                        <th style="padding: 15px; text-align: left;">Usuário criador</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,13 +95,11 @@ $result = $conn->query($sql);
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 12px 15px;"><?php echo $row['id']; ?></td>
                                 <td style="padding: 12px 15px;"><?php echo $row['nome_completo']; ?></td>
-                                <td style="padding: 12px 15px;"><code><?php echo $row['username']; ?></code></td>
-                                <td style="padding: 12px 15px;"><?php echo $row['email']; ?></td>
-                                <td style="padding: 12px 15px;"><?php echo $row['telefone']; ?></td>
-                                <td style="padding: 12px 15px;">
-                                    <a href="../profile_user/index.php?id=<?php echo $row['id']; ?>" class="btn-acao" style="padding: 5px 10px; font-size: 0.8rem;">Perfil</a>
-                                    <a href="../../engine/excluir.php?id=<?php echo $row['id']; ?>" class="btn-acao" style="padding: 5px 10px; font-size: 0.8rem; background-color: #e74c3c;" onclick="return confirm('Excluir este usuário?')">Excluir</a>
-                                </td>
+                                <td style="padding: 12px 15px;"><code><?php echo $row['data_cadastro']; ?></code></td>
+                                <td style="padding: 12px 15px;"><code><?php echo $row['usuario_criador']; ?></code></td>
+                                
+                                    
+                                
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
@@ -124,4 +113,29 @@ $result = $conn->query($sql);
     </div>
 
 </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </html>

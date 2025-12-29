@@ -1,75 +1,88 @@
 <?php
-// registro.php
 session_start();
 include 'engine/config.php';
 
 $error = '';
 
-if (isset($_POST['register'])) {
-    $new_username = $_POST['new_username'];
-    $new_password = $_POST['new_password'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btn_register'])) {
+    $nome = $_POST['nome_completo'];
+    $user = $_POST['username'];
+    $pass = $_POST['password'];
+    $conf = $_POST['confirm_password'];
 
-    $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-
-    $stmt = $conn->prepare("INSERT INTO usuarios (username, password_hash) VALUES (?, ?)");
-    $stmt->bind_param("ss", $new_username, $password_hash);
-    
-    if ($stmt->execute()) {
-        // Redireciona para o login com uma mensagem de sucesso via URL
-        header("Location: index.php?success=1");
-        exit;
+    // Validações básicas
+    if ($pass !== $conf) {
+        $error = "As senhas não coincidem!";
     } else {
-        $error = "Erro ao cadastrar: " . $conn->error;
+        // Verifica se o usuário já existe
+        $check = $conn->prepare("SELECT id FROM usuarios WHERE username = ?");
+        $check->bind_param("s", $user);
+        $check->execute();
+        if ($check->get_result()->num_rows > 0) {
+            $error = "Este nome de usuário já está em uso.";
+        } else {
+            // Hash da senha e inserção
+            $password_hash = password_hash($pass, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO usuarios (nome_completo, username, password_hash) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $nome, $user, $password_hash);
+            
+            if ($stmt->execute()) {
+                header("Location: index.php?success=1");
+                exit;
+            } else {
+                $error = "Erro ao cadastrar: " . $conn->error;
+            }
+        }
     }
-    $stmt->close();
 }
-$conn->close();
-
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro - Chat Interno</title>
-    <link rel="stylesheet" href="styles\cadastro\style.css">
-    
-<body style ="background-image:url('Teladelogin/background.png');
-              background-position: center 30%;">
-              <br><br><br><br> 
+    <title>Cadastro - TWOWAY</title>
+    <link rel="stylesheet" href="styles/cadastro/cadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="registro-body">
 
-   <div style="box-shadow: 15px 4px 10px rgba(0, 0, 0, 0.64);
-            background-color: rgba(137, 250, 244, 0.4);
-            text-align: center;
-            border-radius: 200px;
-            width: 350px;
-            height: 550px;">
-    <br>
-    <h1 style= "color: blue">TWOWAY</h1>
-   <h2>Criar Nova Conta</h2>
-    <?php if ($error) : ?>
-        <p style="color: red;"><?php echo $error; ?></p>
-    <?php endif; ?>
+    <div class="registro-container">
+        <h1 class="logo-text">TWOWAY</h1>
+        <h2>Criar Nova Conta</h2>
 
-  <form method="POST" action="index.php">
+        <?php if ($error) : ?>
+            <div class="error-msg">
+                <i class="fa fa-exclamation-circle"></i> <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="registro.php">
+            <div class="input-group">
+                <label>Nome Completo</label>
+                <input type="text" name="nome_completo" placeholder="Ex: Samuel Doe" required>
+            </div>
+
+            <div class="input-group">
                 <label>Usuário</label>
-                <br>
-                <input type="text" name="username" required style= "border-radius: 10px; width: 200px; height: 25px;"><br><br>
-                
+                <input type="text" name="username" placeholder="Seu nome de usuário" required>
+            </div>
+
+            <div class="input-group">
                 <label>Senha</label>
-                <br>
-                <input type="password" name="password" required style= "border-radius: 10px; width: 200px; height: 25px;"><br><br>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
 
-                <label> Confirmar senha </label>
-                <br>
-                <input type="password" name="password" required style= "border-radius: 10px; width: 200px; height: 25px;"><br><br>
+            <div class="input-group">
+                <label>Confirmar Senha</label>
+                <input type="password" name="confirm_password" placeholder="••••••••" required>
+            </div>
 
-                
-                <button type="submit">Cadastrar</button>
-            </form>
-        
-        <p>Já tem uma conta? <a href="index.php">Faça login aqui</a></p>
-        <br>
+            <button type="submit" name="btn_register" class="btn-cadastrar">Cadastrar</button>
+        </form>
+
+        <p class="footer-link">Já tem uma conta? <a href="index.php">Faça login aqui</a></p>
     </div>
+
 </body>
 </html>

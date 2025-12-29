@@ -1,41 +1,77 @@
 body {align-items: center;
-    
+    background-image: url();
 }
 
 
 
 h1 {
-  border: solid 2px black;
   display: inline-block;
-  background-color: rgb(173, 171, 177);
+  background-color: white;
   margin: 2px;
-  border-radius: 10px;
   width: 280px;
   text-align: center
-  
+}
 
   
-}
- fieldset {
-    margin 0;
-    padding: 0;
-    box-sizing: border-box;
-    width: 100%;
-    text-align: center;
-    background-color: rgb(173, 171, 177);
-    border-radius: 40px;
- }
+
  table{
     margin-left: auto;
     margin-right: auto;
     width:100%;
-    border-color: black; 
+    border-color: white;
     border: 1px solid;
     text-align: center;
-    background-color: rgb(173, 171, 177);
-    border-radius: 10px;
  }
+.R5{
+    height: 100%;
+    width: 200px;
+    border-color: blueviolet;
+    background-color: #2c3e50;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+ .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+ }
+  .sidebar a {
+            display: block;
+            color: #bdc3c7;
+            padding: 15px 25px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+  .sidebar h2 {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+        }
+ .sidebar a:hover {
+            background-color: #34495e;
+            color: white;
+        } 
+.R8{
+border-color: black;  
+position: absolute;
+left: 250px;
+width: 800px;
+background-color: whitesmoke;
 
-    
-   
+}
+.R6{
+    position: absolute;
+    top: 90%;
+    left: 0;
+}
+fieldset{
+   border-color: black;
+   width: 300px;
+}
+      
  

@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username_db = "root"; // Altere se o seu usuário MySQL não for 'root'
 $password_db = "";     // Altere se você tiver uma senha para o MySQL
-$dbname = "chat"; // Nome da base de dados que você criou
+$dbname = "twoway"; // Nome da base de dados que você criou
 
 // Cria a conexão
 $conn = new mysqli($servername, $username_db, $password_db, $dbname);

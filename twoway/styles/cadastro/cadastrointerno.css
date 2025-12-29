@@ -1,31 +1,88 @@
 body {
-     align-items: center;
+    margin-top: 0;
+    background-image: url(../../images/Buscuser.png);
+
 }
 
-
-
-h1 {
-  border: solid 2px black;
-  display: inline-block;
-  background-color: rgb(173, 171, 177);
-  margin: 2px;
-  border-radius: 10px;
-  width: 280px;
-  text-align: center;
-
-  
+   
+.R1 {
+  position: absolute;
+  left: 20%;
+  height: 400px;   
+  top: 28%;
+  background-color: white;
+  width: 700px;
+  border-radius: 30px;
+    
 }
-fieldset {
-text-align: left;
-width: 300px;
-height:300px;
-box: shadow 50px;
-background-color: rgb(173, 171, 177);
-border-radius: 50px;
-box-shadow: 30px;
-align-items: center;
-} 
+.R2
+{
+ position: absolute;  
+ left: 60%;
+ 
+}
+    
+.R3
+{
+  position: absolute;
+   
+ left: ;  
+}
 
+.R4 {
+    margin-top: 0%;
+    position: absolute;
+    left: 45%;
+}
+.R5{
+    height: 100%;
+    width: 200px;
+    border-color: blueviolet;
+    background-color: #2c3e50;
+    position: absolute;
+    
+    left: 0;
 
-  
-
+}
+.R6{
+    position: absolute;
+    top: 90%;
+    left: 0;
+}
+ .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            padding-top: 20px;
+ }
+  .sidebar a {
+            display: block;
+            color: #bdc3c7;
+            padding: 15px 25px;
+            text-decoration: none;
+            transition: 0.3s;
+            
+        }
+  .sidebar h2 {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+        }
+ .sidebar a:hover {
+            background-color: #34495e;
+            color: white;
+        }
+fieldset{
+height: 579px;
+width: 310px;
+position: absolute;
+left: 513%;
+top: 0%;
+}
+.namepag{
+position: absolute;
+left: 500px;    
+}

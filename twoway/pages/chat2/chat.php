@@ -56,7 +56,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interno - <?php echo htmlspecialchars($username); ?></title>
     <link rel="stylesheet" href="../../styles/chat/style.css">
-     <link rel="stylesheet" href="../../styles/search_users/styles.css">
+    <link rel="stylesheet" href="../../styles/search_users/style.css"> 
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1"></script>
 </head>
 <body>
@@ -72,7 +72,7 @@ $conn->close();
             <input type="text" id="search-input" placeholder="Buscar nas conversas...">
         </div>
 
-        <div id="contact-list" style="flex-grow: 1; overflow-y: auto;">
+        <div id="contact-list">
             <div id="recent-contacts">
                 <?php foreach ($contatos as $u) : ?>
                     <div class="contact-item" 
@@ -96,17 +96,11 @@ $conn->close();
         </div>
 
         <div id="out-config">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-                <a href="../../logout.php" style="color: #ff4d4d; text-decoration: none; font-weight: bold; font-size: 14px;">
-                    Sair do Chat
-                </a>
-                
-                <?php if (isset($_SESSION['nivel_acesso']) && $_SESSION['nivel_acesso'] == 'admin'): ?>
-                    <a href="../../pages/admin/index.php" title="Painel de Controle" style="text-decoration:none; font-size: 18px; border-left: 1px solid #ddd; padding-left: 15px;">
-                        ⚙️
-                    </a>
-                <?php endif; ?>
-            </div>
+            <a href="../../logout.php" style="color: #ff4d4d; text-decoration: none; padding: 15px; display: block;">Sair do Chat</a>
+
+            <?php if (isset($_SESSION['nivel_acesso']) && $_SESSION['nivel_acesso'] == 'admin'): ?>
+                <a href="../../pages/admin/index.php" title="Painel de Controle" style="text-decoration:none; font-size: 14px;">⚙️</a>
+            <?php endif; ?>
         </div>
 
     </div>
@@ -130,62 +124,27 @@ $conn->close();
             </div>
 
             <div style="display: flex; align-items: center; width: 100%; gap: 10px;">
-                        <input type="file" id="media-input" style="display: none;">
-                        <button id="media-button" type="button">📎</button>
-                        
-                        <input type="text" id="message-input" placeholder="Digite sua mensagem...">
-                        
-                        <button id="emoji-button" type="button">😀</button>
-                        <button id="send-button">Enviar</button>
-                    </div>
+                <input type="file" id="media-input" accept="*" style="display: none;">
+                <button id="media-button" type="button" title="Anexar Arquivo">📎</button>
+                
+                <input type="text" id="message-input" placeholder="Digite sua mensagem...">
+                <button id="emoji-button" type="button">😀</button>
+                <button id="send-button">Enviar</button>
+            </div>
         </div>
     </div>
-
-        <audio id="notif-sound" preload="auto">
-            <source src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" type="audio/mpeg">
-        </audio>
 
 <script>
     const REMETENTE_ID = <?php echo json_encode($user_id); ?>;
     let destinatarioId = null; 
     let destinatarioUsername = null;
-    let chatTipo = 'privado'; 
+    let chatTipo = 'privado'; // NOVO: Armazena se é 'privado' ou 'grupo'
     let pollingInterval = null;
     let lastMessageCount = 0; 
     let selectedFile = null; 
     let replyingToId = null; 
 
-    // --- LÓGICA DE NOTIFICAÇÃO NA ABA E SOM ---
-    let originalTitle = document.title;
-    let alertInterval = null;
-
-    function notifyUser(count) {
-        // 1. Tocar o Som
-        const sound = document.getElementById('notif-sound');
-        if (sound) {
-            sound.currentTime = 0; // Reinicia para permitir sons repetidos rápidos
-            sound.play().catch(e => console.log("Áudio aguardando interação do usuário."));
-        }
-
-        // 2. Piscar a Aba (Apenas se não estiver focado)
-        if (document.hidden && !alertInterval) {
-            alertInterval = setInterval(() => {
-                document.title = document.title === originalTitle 
-                    ? `(${count}) Nova Mensagem...` 
-                    : originalTitle;
-            }, 1000);
-        }
-    }
-
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            clearInterval(alertInterval);
-            alertInterval = null;
-            document.title = originalTitle;
-        }
-    });
-
-    // --- LÓGICA DE BUSCA DINÂMICA ---
+    // --- LÓGICA DE BUSCA DINÂMICA --- (Mantida)
     const searchInput = document.getElementById('search-input');
     const recentDiv = document.getElementById('recent-contacts');
     const searchResultsDiv = document.getElementById('search-results');
@@ -221,6 +180,7 @@ $conn->close();
 
         destinatarioId = item.dataset.id;
         destinatarioUsername = item.dataset.username;
+        // NOVO: Verifica no dataset do HTML se é grupo ou usuário
         chatTipo = item.dataset.tipo || 'privado'; 
         
         document.querySelectorAll('.contact-item').forEach(el => el.classList.remove('selected-chat'));
@@ -229,37 +189,23 @@ $conn->close();
         document.getElementById('chat-header').textContent = destinatarioUsername;
         document.getElementById('input-area').style.display = 'flex';
         
-        lastMessageCount = 0; 
         cancelReply();
         loadMessages();
         if (pollingInterval) clearInterval(pollingInterval);
         pollingInterval = setInterval(loadMessages, 3000);
     });
 
-    // --- LÓGICA DE EMOJIS ---
-    const emojiButton = document.getElementById('emoji-button');
-    const emojiContainer = document.getElementById('emoji-picker-container');
-    const picker = document.querySelector('emoji-picker');
-
-    emojiButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isHidden = emojiContainer.style.display === 'none' || emojiContainer.style.display === '';
-        emojiContainer.style.display = isHidden ? 'block' : 'none';
+    // --- EMOJIS (Mantido) ---
+    document.getElementById('emoji-button').addEventListener('click', () => {
+        const container = document.getElementById('emoji-picker-container');
+        container.style.display = container.style.display === 'none' ? 'block' : 'none';
     });
-
-    picker.addEventListener('emoji-click', event => {
+    document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
         messageInput.value += event.detail.unicode;
-        emojiContainer.style.display = 'none';
         messageInput.focus();
     });
 
-    document.addEventListener('click', (e) => {
-        if (!emojiContainer.contains(e.target) && e.target !== emojiButton) {
-            emojiContainer.style.display = 'none';
-        }
-    });
-
-    // --- ANEXOS ---
+    // --- ANEXOS (Mantido) ---
     document.getElementById('media-button').addEventListener('click', () => mediaInput.click());
     mediaInput.addEventListener('change', (e) => {
         selectedFile = e.target.files[0];
@@ -269,7 +215,7 @@ $conn->close();
         }
     });
 
-    // --- RESPOSTAS ---
+    // --- RESPOSTAS (Mantido) ---
     function startReply(id, user, text) {
         replyingToId = id;
         document.getElementById('reply-user').textContent = user;
@@ -283,77 +229,61 @@ $conn->close();
     }
     document.getElementById('reply-bar-close').addEventListener('click', cancelReply);
 
-    // --- CARREGAR MENSAGENS ---
+    // --- CARREGAR MENSAGENS (Atualizado para Grupos) ---
     function loadMessages() {
         if (!destinatarioId) return;
-
+        // ADICIONADO: &tipo=${chatTipo} na URL
         fetch(`../../engine/api_chat.php?action=get_messages&destinatario_id=${destinatarioId}&tipo=${chatTipo}`)
             .then(res => res.json())
             .then(data => {
-                // Notificação se houver novas mensagens de outros
-                if (lastMessageCount > 0 && data.length > lastMessageCount) {
-                    const ultimaMsg = data[data.length - 1];
-                    if (parseInt(ultimaMsg.remetente_id) !== parseInt(REMETENTE_ID)) {
-                        notifyUser(data.length - lastMessageCount);
-                    }
-                }
-                
-                // Salva se o usuário estava no fim do scroll antes de atualizar
-                const isAtBottom = messagesDiv.scrollHeight - messagesDiv.clientHeight <= messagesDiv.scrollTop + 50;
-
-                if (data.length !== lastMessageCount) {
-                    messagesDiv.innerHTML = '';
-                    data.forEach(msg => {
-                        const isSent = parseInt(msg.remetente_id) === parseInt(REMETENTE_ID);
-                        const wrapper = document.createElement('div');
-                        wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
-                        
-                        let fileHtml = '';
-                        if (msg.arquivo_path) {
-                            const ext = msg.arquivo_path.split('.').pop().toLowerCase();
-                            if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
-                                fileHtml = `<img src="${msg.arquivo_path}" class="chat-img" onclick="window.open('${msg.arquivo_path}')">`;
-                            } else {
-                                fileHtml = `<div class="file-box"><a href="${msg.arquivo_path}" target="_blank">📄 Baixar Arquivo (.${ext})</a></div>`;
-                            }
+                messagesDiv.innerHTML = '';
+                data.forEach(msg => {
+                    const isSent = parseInt(msg.remetente_id) === parseInt(REMETENTE_ID);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+                    
+                    let fileHtml = '';
+                    if (msg.arquivo_path) {
+                        const ext = msg.arquivo_path.split('.').pop().toLowerCase();
+                        if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                            fileHtml = `<img src="${msg.arquivo_path}" class="chat-img" onclick="window.open('${msg.arquivo_path}')">`;
+                        } else {
+                            fileHtml = `<div class="file-box"><a href="${msg.arquivo_path}" target="_blank">📄 Baixar Arquivo (.${ext})</a></div>`;
                         }
-
-                        let quoteHtml = msg.reply_to_id ? `<div class="quoted-msg"><strong>${msg.replied_username || 'Usuário'}:</strong> ${msg.replied_mensagem || 'Arquivo'}</div>` : '';
-                        let remetenteNomeHtml = (chatTipo === 'grupo' && !isSent) ? `<small class="remetente-nome" style="color: #075e54; font-weight: bold; display: block; margin-bottom: 2px;">${msg.remetente_nome}</small>` : '';
-
-                        wrapper.innerHTML = `
-                            <div class="message-box">
-                                ${remetenteNomeHtml}
-                                ${quoteHtml}
-                                ${fileHtml}
-                                <p>${msg.mensagem || ''}</p>
-                                <div class="msg-footer">
-                                    <span class="reply-btn" onclick="startReply('${msg.id}', '${isSent ? 'Você' : (msg.remetente_nome || destinatarioUsername)}', '${msg.mensagem || 'Arquivo'}')">↩️</span>
-                                    ${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                    ${isSent ? `<span onclick="deleteMessage(${msg.id})">🗑️</span>` : ''}
-                                </div>
-                            </div>
-                        `;
-                        messagesDiv.appendChild(wrapper);
-                    });
-
-                    // Só rola para baixo se for mensagem própria ou se já estava no fim
-                    if (isAtBottom || (data.length > 0 && parseInt(data[data.length-1].remetente_id) === parseInt(REMETENTE_ID))) {
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
                     }
-                }
-                lastMessageCount = data.length;
+
+                    let quoteHtml = msg.reply_to_id ? `<div class="quoted-msg"><strong>${msg.replied_username || 'Usuário'}:</strong> ${msg.replied_mensagem || 'Arquivo'}</div>` : '';
+
+                    // NOVO: Exibe o nome do remetente se for grupo e a mensagem for recebida
+                    let remetenteNomeHtml = (chatTipo === 'grupo' && !isSent) ? `<small class="remetente-nome" style="color: #075e54; font-weight: bold; display: block; margin-bottom: 2px;">${msg.remetente_nome}</small>` : '';
+
+                    wrapper.innerHTML = `
+                        <div class="message-box">
+                            ${remetenteNomeHtml}
+                            ${quoteHtml}
+                            ${fileHtml}
+                            <p>${msg.mensagem || ''}</p>
+                            <div class="msg-footer">
+                                <span class="reply-btn" onclick="startReply('${msg.id}', '${isSent ? 'Você' : (msg.remetente_nome || destinatarioUsername)}', '${msg.mensagem || 'Arquivo'}')">↩️</span>
+                                ${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                ${isSent ? `<span onclick="deleteMessage(${msg.id})">🗑️</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    messagesDiv.appendChild(wrapper);
+                });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
     }
 
-    // --- ENVIAR ---
+    // --- ENVIAR (Atualizado para Grupos) ---
     function handleSend() {
         const text = messageInput.value.trim();
         if (!text && !selectedFile) return;
 
         const formData = new FormData();
         formData.append('destinatario_id', destinatarioId);
-        formData.append('tipo', chatTipo); 
+        formData.append('tipo', chatTipo); // NOVO: Envia se é privado ou grupo
         formData.append('mensagem', text);
         formData.append('reply_to_id', replyingToId || '');
 
@@ -388,6 +318,5 @@ $conn->close();
         fetch('../../engine/api_chat.php?action=delete_message', { method: 'POST', body: form }).then(() => loadMessages());
     }
 </script>
-
 </body>
 </html>
