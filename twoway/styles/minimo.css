@@ -1,0 +1,30 @@
+/* Estilo do Perfil na Sidebar */
+.profile {
+    padding: 20px;
+    border-bottom: 1px solid #34495e;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#perfil-user img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3498db;
+}
+
+.profile_info span {
+    font-size: 0.8rem;
+    color: #bdc3c7;
+    display: block;
+}
+
+.profile_info h2 {
+    font-size: 1rem;
+    margin: 0;
+    color: #fff;
+    text-align: left; /* Alinha o nome à esquerda na sidebar */
+}

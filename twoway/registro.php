@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btn_register'])) {
     $nome = $_POST['nome_completo'];
     $user = $_POST['username'];
     $pass = $_POST['password'];
-    $conf = $_POST['confirm_password'];
+    $conf = $_POST['tel_ramal'];
 
     // Validações básicas
     if ($pass !== $conf) {

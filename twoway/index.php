@@ -44,52 +44,45 @@ $conn->close();
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Chat Interno</title>
-    <link rel="stylesheet" href="styles/login/style.css">
+    <title>Cadastro - TWOWAY</title>
+    <link rel="stylesheet" href="styles/cadastro/cadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body  style ="background-image:url('Teladelogin/background.png');
-              background-position: center 30%;">
+    <body class="registro-body">
+
+        <div class="registro-container">
+            <h1 class="logo-text">TWOWAY</h1>
+                <h2>Faça login em sua conta</h2>
+
+                    <?php if ($error) : ?>
+                        <p style="color: <?php echo isset($_GET['success']) ? 'green' : 'red'; ?>;">
+                            <?php echo $error; ?>
+                        </p>
+                    <?php endif; ?>
+
+                <form method="POST" action="index.php">
+
+                    <div class="input-group">
+                        <label>Usuário</label>
+                        <input type="text" name="username" placeholder="Seu nome de usuário" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button class="btn-cadastrar" type="submit">Entrar</button>
+                </form>
+
+            <p class="footer-link">Esqueceu sua Senha? <br> <a href="redefinir.php" style="text-decoration: none;">Alterar senha</a></p>
+
+            <p class="footer-link">Não tem conta? <br> <a href="registro.php" style = "text-decoration: none">Cadastre-se aqui</a></p>
+
+            <p class="footer-link">v0.0.15</p>
+        </div>
 
 
-    <br><br><br><br>
-
-    <div style="
-    box-shadow: 15px 4px 10px rgba(0, 0, 0, 0.64);
-    background-color: rgba(137, 250, 244, 0.4);
-    text-align: center;
-    border-radius: 200px;
-    width: 350px;
-    height: 550px;
-">
-        <br>
-        <h1 style= "color: blue">TWOWAY</h1>
-
-            <?php if ($error) : ?>
-                <p style="color: <?php echo isset($_GET['success']) ? 'green' : 'red'; ?>;">
-                    <?php echo $error; ?>
-                </p>
-            <?php endif; ?>
-            
-
-            <form method="POST" action="index.php">
-                <label>Usuário:</label>
-                <br>
-                <input type="text" name="username" required style= "border-radius: 10px; width: 200px; height: 25px;"><br><br>
-                
-                <label>Senha:</label>
-                <br>
-                <input type="password" name="password" required style= "border-radius: 10px; width: 200px; height: 25px;"><br><br>
-                
-                <button type="submit">Entrar</button>
-            </form>
-        <p>
-        <a href="redefinir.php" style="text-decoration: none;">Alterar senha</a>
-        </p>
-        <p>Não tem conta? <br> <a href="registro.php" style = "text-decoration: none">Cadastre-se aqui</a></p>
-        <br>
-    </div>
-
-
-</body>
+    </body>
 </html>

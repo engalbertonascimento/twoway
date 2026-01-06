@@ -9,6 +9,21 @@ if (!isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] !== 'admin') 
     exit();
 }
 
+// Dados do usuário logado para exibir no topo
+$user_id = $_SESSION['user_id'];
+$username = $_SESSION['username'];
+
+// --- BUSCA OS DADOS EXTRAS DO USUÁRIO (FOTO) ---
+$query_user = "SELECT profile_pic FROM usuarios WHERE id = ?";
+$stmt = $conn->prepare($query_user);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res_user = $stmt->get_result();
+$usuario = $res_user->fetch_assoc();
+
+// Caso não tenha foto, define uma padrão
+$foto_perfil = !empty($usuario['profile_pic']) ? $usuario['profile_pic'] : 'assets/img/default-user.png';
+
 // 2. LÓGICA DE BUSCA
 $where = "WHERE 1=1"; 
 
@@ -31,11 +46,23 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <title>Criar Novo Grupo | TwoWay Chat</title>
     <link rel="stylesheet" href="../../styles/search_users/styles.css">
+    <link rel="stylesheet" href="../../styles/minimo.css">
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>Administração TwoWay</h2>
+
+        <div class="profile clearfix">
+                <div id="perfil-user">
+                    <img src="../../<?php echo $usuario['profile_pic']; ?>">
+                </div>
+
+                <div class="profile_info">
+                    <span>Seja bem-vindo,</span>
+                    <h2><?php echo $_SESSION['username']; ?></h2>
+                </div>
+        </div>
+
         <a href="../chat/chat.php">🏠 Voltar ao Chat</a>
         <a href="../search_users/index.php">🔍 Gerenciar Usuários</a>
         <a href="#">Funções Futuras</a>

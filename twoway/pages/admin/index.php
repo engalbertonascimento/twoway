@@ -1,6 +1,7 @@
 <?php
 // 1. INÍCIO DA SESSÃO E SEGURANÇA
 session_start();
+include '../../engine/config.php';
 
 // Verifica se o usuário está logado e se o perfil é 'admin'
 // Se não for admin, redireciona para a página de login
@@ -9,8 +10,19 @@ if (!isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] !== 'admin') 
     die(json_encode(['error' => 'Acesso negado']));
 }
 
-// Dados do usuário logado para exibir no topo
+$user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
+
+// --- BUSCA OS DADOS EXTRAS DO USUÁRIO (FOTO) ---
+$query_user = "SELECT profile_pic FROM usuarios WHERE id = ?";
+$stmt = $conn->prepare($query_user);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res_user = $stmt->get_result();
+$usuario = $res_user->fetch_assoc();
+
+// Caso não tenha foto, define uma padrão
+$foto_perfil = !empty($usuario['profile_pic']) ? $usuario['profile_pic'] : 'assets/img/default-user.png';
 ?>
 
 <!DOCTYPE html>
@@ -35,6 +47,37 @@ $username = $_SESSION['username'];
             color: white;
             position: fixed;
             padding-top: 20px;
+        }
+
+        /* Estilo do Perfil na Sidebar */
+        .profile {
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #perfil-user img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3498db;
+        }
+
+        .profile_info span {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            display: block;
+        }
+
+        .profile_info h2 {
+            font-size: 1rem;
+            margin: 0;
+            color: #fff;
+            text-align: left; /* Alinha o nome à esquerda na sidebar */
         }
 
         .sidebar h2 {
@@ -134,7 +177,18 @@ $username = $_SESSION['username'];
 <body>
 
     <div class="sidebar">
-        <h2>Administração TwoWay</h2>
+
+        <div class="profile clearfix">
+                <div id="perfil-user">
+                    <img src="../../<?php echo $usuario['profile_pic']; ?>">
+                </div>
+
+                <div class="profile_info">
+                    <span>Seja bem-vindo,</span>
+                    <h2><?php echo $_SESSION['username']; ?></h2>
+                </div>
+        </div>
+
         <a href="../chat/chat.php">🏠 Voltar ao Chat</a>
         <a href="../search_users/index.php">🔍 Gerenciar Usuários</a>
         <a href="#">Funções Futuras</a>
@@ -160,7 +214,7 @@ $username = $_SESSION['username'];
             <div class="card">
                 <h3>Cadastrar Usuário</h3>
                 <p>Cadastre e edite membros do chat interno.</p>
-                <a href="buscar_usuario.php" class="btn-acao">Ir para Busca</a>
+                <a href="../caduser/" class="btn-acao">Ir para Busca</a>
             </div>
 
             <div class="card">

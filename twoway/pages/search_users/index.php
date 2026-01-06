@@ -9,6 +9,17 @@ if (!isset($_SESSION['nivel_acesso']) || $_SESSION['nivel_acesso'] !== 'admin') 
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$username = $_SESSION['username'];
+
+// --- BUSCA OS DADOS EXTRAS DO USUÁRIO (FOTO) ---
+$query_user = "SELECT profile_pic FROM usuarios WHERE id = ?";
+$stmt = $conn->prepare($query_user);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res_user = $stmt->get_result();
+$usuario = $res_user->fetch_assoc();
+
 // 2. LÓGICA DE BUSCA
 $where = "WHERE 1=1"; 
 
@@ -32,11 +43,23 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Usuário - Chat Interno</title>
     <link rel="stylesheet" href="../../styles/search_users/styles.css">
+    <link rel="stylesheet" href="../../styles/minimo.css">    
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>Administração TwoWay</h2>
+
+        <div class="profile clearfix">
+                <div id="perfil-user">
+                    <img src="../../<?php echo $usuario['profile_pic']; ?>">
+                </div>
+
+                <div class="profile_info">
+                    <span>Seja bem-vindo,</span>
+                    <h2><?php echo $_SESSION['username']; ?></h2>
+                </div>
+        </div>
+
         <a href="../chat/chat.php">🏠 Voltar ao Chat</a>
         <a href="../search_users/index.php">🔍 Gerenciar Usuários</a>
         <a href="#">Funções Futuras</a>

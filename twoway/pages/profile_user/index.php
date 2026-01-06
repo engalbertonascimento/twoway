@@ -8,6 +8,9 @@ if ($_SESSION['nivel_acesso'] !== 'admin') {
     exit();
 }
 
+// Dados do usuário logado para exibir no topo
+$username = $_SESSION['username'];
+
 // Recebe o ID via URL
 $usuario_id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
@@ -49,12 +52,24 @@ $criados_count = $stmt_c->get_result()->fetch_assoc()['total'];
     <title>Gestão de Perfil - <?php echo $usuario['nome_completo']; ?></title>
     <link rel="stylesheet" href="../../styles/profile/styles.css">
     <link rel="stylesheet" href="../../styles/search_users/styles.css">
+    <link rel="stylesheet" href="../../styles/minimo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>Administração TwoWay</h2>
+
+        <div class="profile clearfix">
+                <div id="perfil-user">
+                    <img src="../../<?php echo $usuario['profile_pic']; ?>">
+                </div>
+
+                <div class="profile_info">
+                    <span>Seja bem-vindo,</span>
+                    <h2><?php echo $_SESSION['username']; ?></h2>
+                </div>
+        </div>
+
         <a href="../chat/chat.php">🏠 Voltar ao Chat</a>
         <a href="../search_users/index.php">🔍 Gerenciar Usuários</a>
         <a href="#">Funções Futuras</a>
@@ -66,7 +81,7 @@ $criados_count = $stmt_c->get_result()->fetch_assoc()['total'];
 
         <div class="header">
             <div class="welcome-msg">
-                Buscar Usuários<strong>  <?php echo htmlspecialchars($usuario['nome_completo']); ?></strong>
+                Perfil de Usuário
             </div>
             <div>
                 <span style="margin-right: 20px;">Olá, <strong><?php echo $_SESSION['username']; ?></strong></span>
@@ -79,7 +94,9 @@ $criados_count = $stmt_c->get_result()->fetch_assoc()['total'];
     <div class="content-layout">
         <aside class="sidebar-profile">
             <div class="profile-card">
-                <img src="../../<?php echo $g['profile_pic']; ?>">
+                <div id="perfil-user">
+                    <img src="../../<?php echo $usuario['profile_pic']; ?>">
+                </div>
                 <h2><?php echo htmlspecialchars($usuario['nome_completo']); ?></h2>
                 <span class="badge-role <?php echo $usuario['nivel_acesso']; ?>">
                     <?php echo strtoupper($usuario['nivel_acesso']); ?>

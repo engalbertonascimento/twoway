@@ -6,6 +6,27 @@
     --white: #ffffff;
 }
 
+/* -----------------------------------------
+   2. SIDEBAR (Aba do Perfil)
+   ----------------------------------------- */
+/* Container do Perfil */
+#perfil-user {
+    display: flex;         
+    align-items: center; 
+    align-content: center;  
+    justify-content: center;
+}
+
+/* Estilização da Foto de Perfil */
+#perfil-user img {
+    width: 80px;           /* Tamanho da imagem */
+    height: 80px;
+    border-radius: 50%;    /* Deixa a foto redonda */
+    object-fit: cover;     /* Garante que a imagem não distorça */
+    border: 1px solid var(--tg-border); /* Opcional: bordinha fina */
+}
+
+
 body { font-family: 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
 
 .main-wrapper { padding: 25px; }

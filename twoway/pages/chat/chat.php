@@ -56,7 +56,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interno - <?php echo htmlspecialchars($username); ?></title>
     <link rel="stylesheet" href="../../styles/chat/style.css">
-     <link rel="stylesheet" href="../../styles/search_users/styles.css">
+ <link rel="stylesheet" href="../../styles/search_users/styles.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1"></script>
 </head>
 <body>
