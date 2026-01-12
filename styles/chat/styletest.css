@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  display: flex; 
+  overflow: hidden; 
+}
+.sidebar1{
+ background-color: #2c3e50;
+ width: 50px; 
+ border-right: 2px;
+ border-radius: 0px;
+ border: 1px solid;
+ height: calc(100vh - 2px);
+}
+.botao-universal img {
+    width: 30px; 
+    height: 30px;  
+    background-size: cover;    
+    margin: 0;
+}
+.contatos{
+ background-color: whitesmoke;
+ width: 300px; 
+ border-right: 2px;
+ border-radius: 0px;
+ border: 1px solid;
+ height: calc(100vh - 2px);   
+}

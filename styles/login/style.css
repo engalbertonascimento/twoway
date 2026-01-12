@@ -1,0 +1,22 @@
+body {
+  background-color: rgb(64, 128, 150);
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-size: 20px;
+}
+#login {
+    box-shadow: 15px 4px 10px rgba(0, 0, 0, 0.64);
+    background-color: rgba(124, 231, 228, 0.315);
+    text-align: center;
+    border-radius: 200px;
+    width: 350px;
+    height: 480px;
+}
+
